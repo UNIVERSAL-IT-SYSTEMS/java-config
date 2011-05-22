@@ -4,11 +4,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-from .OutputFormatter import *
-from .Package import *
-from .Virtual import *
-from .VM import *
-from .Errors import *
+from .OutputFormatter import OutputFormatter
+from .Package import Package
+from .Virtual import Virtual
+from .VM import VM
+from .Errors import EnvironmentUndefinedError,InvalidConfigError,InvalidVMError,PermissionError
 from itertools import chain
 
 from os.path import basename, dirname
@@ -56,7 +56,7 @@ class EnvironmentManager(object):
                     continue
                 except PermissionError:
                     continue
-                except InvalidVMError as ex:
+                except InvalidVMError, ex:
                     printer = OutputFormatter()
                     printer._printAlert("Invalid vm configuration file found: %s\nJava-config 2 requires some new variables, please update all your jdk/jre:  file\n(%s)" % ( conf, ex ))
                     continue
