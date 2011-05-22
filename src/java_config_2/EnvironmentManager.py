@@ -5,10 +5,10 @@
 # $Header: $
 
 from .OutputFormatter import OutputFormatter
-from .Package import Package
+from .Package import Package,EnvFileParser
 from .Virtual import Virtual
 from .VM import VM
-from .Errors import EnvironmentUndefinedError,InvalidConfigError,InvalidVMError,PermissionError
+from .Errors import EnvironmentUndefinedError,InvalidConfigError,InvalidVMError,PermissionError,UnexistingPackageError
 from itertools import chain
 
 from os.path import basename, dirname
