@@ -12,6 +12,10 @@ from java_config_2.Errors import *
 
 import os
 import sys
+
+global printer, manager
+printer = OutputFormatter(True, True)
+manager = EnvironmentManager()
 try:
     # Python 3.
     from subprocess import getoutput
@@ -107,7 +111,9 @@ def query_pkg(option, opt, value, parser ,query=None):
         try:
             package = manager.get_package(value)
             if package.query(query):
+                result=package.query(query)
                 printer._print(package.query(query))
+                return result
             else:
                 printer._printError('Package %s does not define %s in it\'s package.env.' % (package.name(), query))
         except UnexistingPackageError, e:
@@ -323,9 +329,6 @@ def fatalError(msg):
     sys.exit(1)
 
 if __name__ == '__main__':
-    global printer, manager
-    printer = OutputFormatter(True, True)
-    manager = EnvironmentManager()
 
     usage =  "java-config [options]\n\n"
     usage += "Java Configuration Utility Version " + str(__version__) + "\n"
