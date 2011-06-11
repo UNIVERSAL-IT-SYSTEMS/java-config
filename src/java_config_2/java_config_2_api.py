@@ -116,10 +116,13 @@ def query_pkg(option, opt, value, parser ,query=None):
                 return result
             else:
                 printer._printError('Package %s does not define %s in it\'s package.env.' % (package.name(), query))
-        except UnexistingPackageError, e:
+        #change to can be compiled both in Python 2.5 and 3.1
+        #except UnexistingPackageError, e:
+        except UnexistingPackageError:
+            e, e_info, e_traceback=sys.exc_info()
             printer._printError("Package %s was not found!" % e.package)
             error = True
-        except PermissionError, e:
+        except PermissionError:
             printer._printError("You do not have enough permissions to read the package's package.env")
             error = True
     else:
