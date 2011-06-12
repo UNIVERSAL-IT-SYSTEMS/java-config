@@ -119,7 +119,7 @@ def query_pkg(option, opt, value, parser ,query=None):
         #change to can be compiled both in Python 2.5 and 3.1
         #except UnexistingPackageError, e:
         except UnexistingPackageError:
-            e, e_info, e_traceback=sys.exc_info()
+            e_type, e, e_traceback=sys.exc_info()
             printer._printError("Package %s was not found!" % e.package)
             error = True
         except PermissionError:

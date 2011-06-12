@@ -59,7 +59,7 @@ class EnvironmentManager(object):
                 #change to can be compiled both in Python 2.5 and 3.1
                 #except InvalidVMError, ex:
                 except InvalidVMError:
-                    ex, ex_info, ex_traceback=sys.exc_info()
+                    ex_type, ex, ex_traceback=sys.exc_info()
                     printer = OutputFormatter()
                     printer._printAlert("Invalid vm configuration file found: %s\nJava-config 2 requires some new variables, please update all your jdk/jre:  file\n(%s)" % ( conf, ex ))
                     continue
