@@ -149,8 +149,11 @@ def query_pkg(option, opt, value, parser ,query=None):
 #        os.system(cmd)
 
 def list_available_packages(option, opt, value, parser):
+    pkg_list=[]
     for package in manager.get_packages().values():
         printer._print("[%s] %s (%s)" % (package.name(), package.description(), package.file()))
+        pkg_list+=[(package.name(), package.description(), package.file())]
+    return pkg_list
 
 #def list_available_vms(option, opt, value, parser):
 #    vm_list = manager.get_virtual_machines()
