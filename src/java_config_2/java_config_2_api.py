@@ -12,7 +12,7 @@ from java_config_2.Errors import *
 
 #import os
 import sys
-
+print("iiii")
 #global printer, manager
 printer = OutputFormatter(True, True)
 manager = EnvironmentManager()
@@ -77,31 +77,36 @@ manager = EnvironmentManager()
 #    except PermissionError:
 #        fatalError("The java executable was not found in the Java path")
 #
-#def query_pkg_path(option, opt, value, parser, query):
-#    error = False
-#    try:
-#        packages = value.split(',')
-#        path = set()
-#        missing_deps = set()
-#        if not parser.values.with_deps:
-#            path = manager.build_path(packages, query)
-#        else:
-#            path = manager.build_dep_path(packages, query, missing_deps)
-#
+def query_pkg_path(option, opt, value, parser, query, withDeps):
+    error = False
+    reason = ""
+    try:
+        packages = value.split(',')
+        path = set()
+        missing_deps = set()
+        if not withDeps:
+            path = manager.build_path(packages, query)
+        else:
+            path = manager.build_dep_path(packages, query, missing_deps)
 #        printer._print(':'.join(path))
-#
-#        if len(missing_deps) > 0:
-#            for dep in missing_deps:
+        if len(missing_deps) > 0:
+            missing_pkgs_string="";
+            for dep in missing_deps:
+                missing_pkgs_string+=(dep+",")
 #                printer._printError("Dependency package %s was not found!" % dep)
-#            error = True
-#
-#    except UnexistingPackageError, e:
+            reason="Dependency package "+missing_pkgs_string+" was not found!"
+            error = True
+    #change to can be compiled both in Python 2.5 and 3.1
+    #except UnexistingPackageError, e:
+    except UnexistingPackageError:
+        e_type, e, e_traceback=sys.exc_info()
 #        printer._printError("Package %s was not found!" % e.package)
-#        error = True
-#
+        reason="Package "+e.package+" was not found!"
+        error = True
 #    if error:
 #        sys.exit(1)
-#
+    return (error,reason,path)
+
 def query_pkg(option, opt, value, parser ,query=None):
     error = False
     if query: pass
@@ -112,7 +117,7 @@ def query_pkg(option, opt, value, parser ,query=None):
             package = manager.get_package(value)
             if package.query(query):
                 result=package.query(query)
-                printer._print(package.query(query))
+#               printer._print(package.query(query))
                 return result
             else:
                 printer._printError('Package %s does not define %s in it\'s package.env.' % (package.name(), query))
@@ -151,7 +156,7 @@ def query_pkg(option, opt, value, parser ,query=None):
 def list_available_packages(option, opt, value, parser):
     pkg_list=[]
     for package in manager.get_packages().values():
-        printer._print("[%s] %s (%s)" % (package.name(), package.description(), package.file()))
+#       printer._print("[%s] %s (%s)" % (package.name(), package.description(), package.file()))
         pkg_list+=[(package.name(), package.description(), package.file())]
     return pkg_list
 
