@@ -12,7 +12,6 @@ from java_config_2.Errors import *
 
 #import os
 import sys
-print("iiii")
 #global printer, manager
 printer = OutputFormatter(True, True)
 manager = EnvironmentManager()
@@ -109,34 +108,73 @@ def query_pkg_path(option, opt, value, parser, query, withDeps):
 
 def query_pkg(option, opt, value, parser ,query=None):
     error = False
-    if query: pass
-    else:
-        query = parser.values.query
-    if query:
-        try:
-            package = manager.get_package(value)
-            if package.query(query):
-                result=package.query(query)
-#               printer._print(package.query(query))
-                return result
-            else:
-                printer._printError('Package %s does not define %s in it\'s package.env.' % (package.name(), query))
-        #change to can be compiled both in Python 2.5 and 3.1
-        #except UnexistingPackageError, e:
-        except UnexistingPackageError:
-            e_type, e, e_traceback=sys.exc_info()
-            printer._printError("Package %s was not found!" % e.package)
+    reason = ""
+    result = ""
+#    if query: pass
+#    else:
+#        query = parser.values.query
+    try:
+        package = manager.get_package(value)
+        if package.query(query):
+            result=package.query(query)
+#           printer._print(package.query(query))
+        else:
+#            printer._printError('Package %s does not define %s in it\'s package.env.' % (package.name(), query))
+            reason = 'Package ' + package.name() + 'does not define '+ query +' in it\'s package.env.'
             error = True
-        except PermissionError:
-            printer._printError("You do not have enough permissions to read the package's package.env")
-            error = True
-    else:
-        printer._printError("No query parameter was specified, unable to retrieve package.env value.")
+    #change to can be compiled both in Python 2.5 and 3.1
+    #except UnexistingPackageError, e:
+    except UnexistingPackageError:
+        e_type, e, e_traceback=sys.exc_info()
+#        printer._printError("Package %s was not found!" % e.package)
+        reason = 'Package ' +e.package +'was not found!'
         error = True
+    except PermissionError:
+#        printer._printError("You do not have enough permissions to read the package's package.env")
+        reason = 'You do not have enough permissions to read the package\'s package.env'
+        error = True
+    return (error,reason,result)
 
-    if error:
-        sys.exit(1)
+def query_pkg_src_doc(option, opt, pkg, withSrc, withDoc, withDeps):
+    error = False
+    reason = ""
+    result = []
+    (error,reason,_result)=query_pkg(None,None,pkg,None,"CLASSPATH")
+    splitedResult=_result.split(':')
+    for oneClasspath in splitedResult:
+        result+=[(oneClasspath,'','','')]
+    print result
+    return (error,reason,result)
+#    if not withSrc:
 #
+#
+##    packages = value.split(',')
+#    path = set()
+##    query=["ClASSPATH"]
+##    if isWithSrc:
+##        query+=["
+##    for pkg in packages:
+#    try:
+#    package = manager.get_package(pkg)
+#    if package.query(query):
+#        result=package.query(query)
+##               printer._print(package.query(query))
+#        return result
+#    else:
+#        printer._printError('Package %s does not define %s in it\'s package.env.' % (package.name(), query))
+#        #change to can be compiled both in Python 2.5 and 3.1
+#        #except UnexistingPackageError, e:
+#        except UnexistingPackageError:
+#            e_type, e, e_traceback=sys.exc_info()
+#            printer._printError("Package %s was not found!" % e.package)
+#            error = True
+#        except PermissionError:
+#            printer._printError("You do not have enough permissions to read the package's package.env")
+#            error = True
+#
+#    if error:
+#        sys.exit(1)
+
 #def get_virtual_providers( option, opt, value, parser):
 #    if manager.get_virtual(value):
 #        output = manager.get_virtual(value).get_packages()
