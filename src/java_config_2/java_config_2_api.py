@@ -141,9 +141,81 @@ def query_pkg_src_doc(option, opt, pkg, withSrc, withDoc, withDeps):
     result = []
     (error,reason,_result)=query_pkg(None,None,pkg,None,"CLASSPATH")
     splitedResult=_result.split(':')
+    srcPath=""
+    docPath=""
+    nativeLibPath=""
+    if withSrc:
+        (_error,_reason,_srcPath)=query_pkg(None,None,pkg,None,"JAVA_SOURCES")
+        srcPath=_srcPath.split(':')[0]
+    if withDoc:
+        (_error,_reason,_docPath)=query_pkg(None,None,pkg,None,"JAVADOC_PATH")
+        docPath=_docPath.split(':')[0]
+    (_error,_reason,nativeLibPath)=query_pkg(None,None,pkg,None,"LIBRARY_PATH")
     for oneClasspath in splitedResult:
-        result+=[(oneClasspath,'','','')]
-    print result
+        result+=[(oneClasspath,srcPath,docPath,nativeLibPath)]
+    if withDeps:
+        (error,reason,_result)=query_deps(None,None,pkg,withSrc,withDoc)
+        result+=_result
+    setResult=set()
+    finalResult=[]
+    for one in result:
+        setResult.add(one)
+    for one in setResult:
+        finalResult.append(one)
+    return (error,reason,finalResult)
+
+def query_deps(option, opt, pkg, withSrc, withDoc):
+    error = False
+    reason = ""
+    result = []
+    (_error,_reason,_depends)=query_pkg(None,None,pkg,None,"DEPEND")
+    if _depends == '':
+        return (error,reason,result)
+    _depends=_depends.split(':')
+    depJars=set()
+    depPkgs=set()
+    for oneJarAtPkg in _depends:
+        if oneJarAtPkg.find('@')!=-1:
+            [_jar,_pkg]=oneJarAtPkg.split('@')
+            depJars.add(_jar)
+            depPkgs.add(_pkg)
+        else:
+            (error,reason,_result)=query_pkg(None,None,oneJarAtPkg,None,"CLASSPATH")
+            splitedResult=_result.split(':')
+            srcPath=""
+            docPath=""
+            nativeLibPath=""
+            if withSrc:
+                (_error,_reason,_srcPath)=query_pkg(None,None,oneJarAtPkg,None,"JAVA_SOURCES")
+                srcPath=_srcPath.split(':')[0]
+            if withDoc:
+                (_error,_reason,_docPath)=query_pkg(None,None,oneJarAtPkg,None,"JAVADOC_PATH")
+                docPath=_docPath.split(':')[0]
+            (_error,_reason,nativeLibPath)=query_pkg(None,None,oneJarAtPkg,None,"LIBRARY_PATH")
+            for oneClasspath in splitedResult:
+                result+=[(oneClasspath,srcPath,docPath,nativeLibPath)]
+            (error,reason,_result)=query_deps(None,None,oneJarAtPkg,withSrc,withDoc)
+            result+=_result
+    for onePkg in depPkgs:
+        (error,reason,_result)=query_pkg(None,None,onePkg,None,"CLASSPATH")
+        splitedResult=_result.split(':')
+        srcPath=""
+        docPath=""
+        nativeLibPath=""
+        if withSrc:
+            (_error,_reason,_srcPath)=query_pkg(None,None,onePkg,None,"JAVA_SOURCES")
+            srcPath=_srcPath.split(':')[0]
+        if withDoc:
+            (_error,_reason,_docPath)=query_pkg(None,None,onePkg,None,"JAVADOC_PATH")
+            docPath=_docPath.split(':')[0]
+        (_error,_reason,nativeLibPath)=query_pkg(None,None,onePkg,None,"LIBRARY_PATH")
+        for oneClasspath in splitedResult:
+            for oneJar in depJars:
+                if oneClasspath.find(oneJar)!=-1:
+                    result+=[(oneClasspath,srcPath,docPath,nativeLibPath)]
+                    break
+        (error,reason,_result)=query_deps(None,None,onePkg,withSrc,withDoc) 
+        result+=_result
     return (error,reason,result)
 #    if not withSrc:
 #
