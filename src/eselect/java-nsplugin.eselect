@@ -14,12 +14,15 @@ SYSTEM_PLUGIN="${EROOT}/usr/lib/nsbrowser/plugins/javaplugin.so"
 SYSTEM_PLUGIN_32="${EROOT}/usr/lib32/nsbrowser/plugins/javaplugin.so"
 SYSTEM_PLUGIN_64="${EROOT}/usr/lib64/nsbrowser/plugins/javaplugin.so"
 
-libdirs=$(list_libdirs)
-if has lib32 ${libdirs} && has lib64 ${libdirs}; then
-	IS_MULTILIB="true"
-else
-	IS_MULTILIB="false"
-fi
+is_multilib() {
+	local libdirs=$(list_libdirs)
+	if has lib32 ${libdirs} && has lib64 ${libdirs}; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 ### show action
 
 ## {{{ show stuff
@@ -69,7 +72,7 @@ fi
 	}
 	
 	do_list() {
-		if [[ ${IS_MULTILIB} != "true" ]]; then
+		if ! is_multilib; then
 			MULTILIB_MODE="none"
 			local system_name=$(get_system_plugin_vm)
 			local targets=( $(get_targets) )
@@ -109,7 +112,7 @@ fi
 	}
 
 	do_set() {
-		if [[ ${IS_MULTILIB} != "true" ]]; then
+		if ! is_multilib; then
 			if [[ ${#} != 1 ]] ; then
 				die -q "Usage: set [nsplugin-vm]"
 			fi
