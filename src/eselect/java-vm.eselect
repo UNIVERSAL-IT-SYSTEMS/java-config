@@ -1,4 +1,4 @@
-# Copyright 1999-2005 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id: $
 
@@ -9,10 +9,10 @@ MAINTAINER="java@gentoo.org"
 SVN_DATE='$Date: $'
 VERSION=$(svn_date_to_version "${SVN_DATE}" )
 
-VM_BASE=/usr/lib/jvm/
-VM_SYSTEM="/etc/java-config-2/current-system-vm"
-VM_USER="${HOME}/.gentoo/java-config-2/current-user-vm"
-VM_CONFIG="/usr/share/java-config-2/vm"
+VM_BASE="${EROOT}/usr/lib/jvm/"
+VM_SYSTEM="${EROOT}/etc/java-config-2/current-system-vm"
+VM_USER="${HOME}/.gentoo${EPREFIX}/java-config-2/current-user-vm"
+VM_CONFIG="${EROOT}/usr/share/java-config-2/vm"
 
 find_targets() {
 	local f
