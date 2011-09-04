@@ -1,4 +1,4 @@
-# Copyright 1999-2006 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id: $
 
@@ -9,14 +9,10 @@ MAINTAINER="java@gentoo.org"
 SVN_DATE='$Date: $'
 VERSION=$(svn_date_to_version "${SVN_DATE}" )
 
-
-PLUGINS_HOME="${ROOT}/usr/share/java-config-2/nsplugin"
-SYSTEM_PLUGIN_DIR="${ROOT}/usr/lib/nsbrowser/plugins"
-SYSTEM_PLUGIN_DIR_32="${ROOT}/usr/lib32/nsbrowser/plugins"
-SYSTEM_PLUGIN_DIR_64="${ROOT}/usr/lib64/nsbrowser/plugins"
-SYSTEM_PLUGIN="${SYSTEM_PLUGIN_DIR}/javaplugin.so"
-SYSTEM_PLUGIN_32="${SYSTEM_PLUGIN_DIR_32}/javaplugin.so"
-SYSTEM_PLUGIN_64="${SYSTEM_PLUGIN_DIR_64}/javaplugin.so"
+PLUGINS_HOME="${EROOT}/usr/share/java-config-2/nsplugin"
+SYSTEM_PLUGIN="${EROOT}/usr/lib/nsbrowser/plugins/javaplugin.so"
+SYSTEM_PLUGIN_32="${EROOT}/usr/lib32/nsbrowser/plugins/javaplugin.so"
+SYSTEM_PLUGIN_64="${EROOT}/usr/lib64/nsbrowser/plugins/javaplugin.so"
 
 libdirs=$(list_libdirs)
 if has lib32 ${libdirs} && has lib64 ${libdirs}; then
