@@ -103,6 +103,16 @@ describe_set() {
 	echo "Set a new system or user vm"
 }
 
+describe_set_parameters() {
+	echo "<user|system> <vm>"
+}
+
+describe_set_options() {
+	echo "user : Set user VM"
+	echo "system : Set system VM"
+	echo "vm : VM handle or number in VM list"
+}
+
 do_set() {
 	local usage="Usage [user|system] [vm]"
 	if [[ ${#} != 2 ]]; then
