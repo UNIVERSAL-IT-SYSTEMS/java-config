@@ -170,4 +170,30 @@ set_symlink() {
 	fi
 }
 
+### update action ###
+
+describe_update() {
+	echo "Sets a system VM if none is set or if the current link is broken."
+}
+
+# TODO respect arch/user defaults or take an argument? -sera
+do_update() {
+	if [[ ! -d $(canonicalise ${VM_SYSTEM}) ]]; then
+		local targets=( $(find_targets) )
+		if [[ ${#targets[@]} > 0 ]]; then
+			echo "No system VM is set, selecting \"${targets[0]}\""
+			echo "To set a different one use eselect java-vm"
+
+			do_set system ${targets[0]}
+		else
+			write_warning_msg "No suitable system VM could be found."
+			write_warning_msg "For Java applications to work install either a JDK or JRE."
+
+			rm -f ${VM_SYSTEM}
+		fi
+	else
+		echo "System VM already set, nothing to do."
+	fi
+}
+
 # vim: set ft=eselect :
