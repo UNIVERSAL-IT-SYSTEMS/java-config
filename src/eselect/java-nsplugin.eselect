@@ -204,4 +204,65 @@ get_system_plugin_vm() {
 	plugin_to_vm ${plugin}
 }
 
+### update action ###
+
+describe_update() {
+	echo "Sets a plugin if none is set or the current one is broken"
+}
+
+do_update() {
+	if is_multilib; then
+		if [[ ! -f $(canonicalise ${SYSTEM_PLUGIN_32}) ]]; then
+			MULTILIB_MODE=32
+			local targets_32=( $(get_targets) )
+			if [[ ${#targets_32[@]} > 0 ]]; then
+				echo "Setting 32bit Java nsplugin to \"${targets[0]}\""
+				echo "To set a different one use eselect java-nsplugin"
+
+				do_set 32bit ${targets_32[0]}
+			else
+				echo "No 32bit Java nsplugin available"
+
+				rm -f ${SYSTEM_PLUGIN_32}
+			fi
+		else
+			echo "32bit Java nsplugin alreday set, nothing to do."
+		fi
+
+		if [[ ! -f $(canonicalise ${SYSTEM_PLUGIN_64}) ]]; then
+			MULTILIB_MODE=64
+			local targets_64=( $(get_targets) )
+			if [[ ${#targets_64[@]} > 0 ]]; then
+				echo "Setting 64bit Java nsplugin to \"${targets[0]}\""
+				echo "To set a different one use eselect java-nsplugin"
+
+				do_set 64bit ${targets_64[0]}
+			else
+				echo "No 64bit Java nsplugin available"
+
+				rm -f ${SYSTEM_PLUGIN_64}
+			fi
+		else
+			echo "64bit Java nsplugin alreday set, nothing to do."
+		fi
+	else
+		if [[ ! -f $(canonicalise ${SYSTEM_PLUGIN}) ]]; then
+			MULTILIB_MODE=none
+			local targets=( $(get_targets) )
+			if [[ ${#targets[@]} > 0 ]]; then
+				echo "Setting Java nsplugin to \"${targets[0]}\""
+				echo "To set a different one use eselect java-nsplugin"
+
+				do_set ${targets[0]}
+			else
+				echo "No Java nsplugin available"
+
+				rm -f ${SYSTEM_PLUGIN}
+			fi
+		else
+			echo "Java nsplugin alreday set, nothing to do."
+		fi
+	fi
+}
+
 # vim: ts=4 sw=4 noet fdm=marker
