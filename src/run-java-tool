@@ -1,17 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-user_vm="${HOME}/.gentoo/java-config-2/current-user-vm"
-system_vm="/etc/java-config-2/current-system-vm"
-# Try GENTOO_VM
-if [[ -n ${GENTOO_VM} ]]; then
-	vmpath="/usr/lib/jvm/${GENTOO_VM}/"
-# Then user VM
-elif [[ -h ${user_vm} ]]; then
-	vmpath=$(readlink ${user_vm})
-# And fall back to the system VM
-else
-	vmpath=$(readlink ${system_vm})
-fi
+vmpath=$(java-config --jdk-home)
 tool=$(basename $0)
 bin=${vmpath}/bin/${tool}
 jrebin=${vmpath}/jre/bin/${tool}
