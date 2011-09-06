@@ -1,3 +1,4 @@
+# -*-eselect-*-  vim: ft=eselect
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id: $
@@ -109,6 +110,22 @@ is_multilib() {
 ## {{{ set stuff
 	describe_set() {
 		echo "Set the system Java browser plugin"
+	}
+
+	describe_set_parameters() {
+		if is_multilib; then
+			echo "<32bit|64bit> <plugin>"
+		else
+			echo "<plugin>"
+		fi
+	}
+	
+	describe_set_options() {
+		if is_multilib; then
+			echo "32bit : Set the 32bit plugin"
+			echo "64bit : Set the 64bit plugin"
+		fi
+		echo "plugin : Handle or number in plugin list"
 	}
 
 	do_set() {
@@ -264,5 +281,3 @@ do_update() {
 		fi
 	fi
 }
-
-# vim: ts=4 sw=4 noet fdm=marker

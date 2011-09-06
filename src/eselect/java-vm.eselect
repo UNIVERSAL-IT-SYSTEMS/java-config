@@ -1,3 +1,4 @@
+# -*-eselect-*-  vim: ft=eselect
 # Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id: $
@@ -195,5 +196,3 @@ do_update() {
 		echo "System VM already set, nothing to do."
 	fi
 }
-
-# vim: set ft=eselect :
