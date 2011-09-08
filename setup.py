@@ -21,10 +21,11 @@ class my_build(build):
 		
 	def run(self):
 		# TODO Should make a copy first. -sera
-		for base, dirs, files in os.walk('src'):
-			for f in files:
-				for line in fileinput.input(os.path.join(base, f),inplace=True):
-					sys.stdout.write(line.replace('@GENTOO_PORTAGE_EPREFIX@', eprefix()))
+		for path in ['conf', 'man', 'src']:
+			for base, dirs, files in os.walk(path):
+				for f in files:
+					for line in fileinput.input(os.path.join(base, f),inplace=True):
+						sys.stdout.write(line.replace('@GENTOO_PORTAGE_EPREFIX@', eprefix()))
 		build.run(self)
 
 class my_install_scripts(install_scripts):

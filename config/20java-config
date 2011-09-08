@@ -1,1 +1,1 @@
-MANPATH="/etc/java-config-2/current-system-vm/man/"
+MANPATH="@GENTOO_PORTAGE_EPREFIX@/etc/java-config-2/current-system-vm/man/"
