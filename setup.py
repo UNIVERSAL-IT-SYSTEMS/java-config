@@ -7,6 +7,26 @@ import os
 def eprefix():
 	return os.getenv('EPREFIX', '')
 
+from distutils.command.build import build
+import fileinput
+import sys
+
+class my_build(build):
+
+	def initialize_options(self):
+		build.initialize_options(self)
+
+	def finalize_options(self):
+		build.finalize_options(self)
+		
+	def run(self):
+		# TODO Should make a copy first. -sera
+		for base, dirs, files in os.walk('src'):
+			for f in files:
+				for line in fileinput.input(os.path.join(base, f),inplace=True):
+					sys.stdout.write(line.replace('@GENTOO_PORTAGE_EPREFIX@', eprefix()))
+		build.run(self)
+
 class my_install_scripts(install_scripts):
 	"""Specialized data file install to handle our symlinks"""
 	install_scripts.user_options.append(('symlink-tools=', None,
@@ -36,7 +56,7 @@ from distutils.core import setup
 from glob import glob
 
 setup (
-	cmdclass={'install_scripts': my_install_scripts},
+	cmdclass={'build' : my_build, 'install_scripts': my_install_scripts},
 	name = 'java-config',
 	version = '2.1.11',
 	description = 'java enviroment configuration tool',
