@@ -248,9 +248,12 @@ if __name__ == '__main__':
     parser = OptionParser(usage, options_list)
     (options, args) = parser.parse_args()
 
+    eprefix = os.getenv('EPREFIX', '@GENTOO_PORTAGE_EPREFIX@')
+    root = os.getenv('ROOT', '')
+
     global printer, manager, verman
     printer = OutputFormatter(True, True)
-    manager = EnvironmentManager()
+    manager = EnvironmentManager(root, eprefix)
     verman = VersionManager()
 
     if not options.package:
