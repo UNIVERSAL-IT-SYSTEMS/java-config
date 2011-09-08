@@ -4,6 +4,9 @@ from distutils.command.install_scripts import install_scripts
 from distutils import log
 import os
 
+def eprefix():
+	return os.getenv('EPREFIX', '')
+
 class my_install_scripts(install_scripts):
 	"""Specialized data file install to handle our symlinks"""
 	install_scripts.user_options.append(('symlink-tools=', None,
@@ -55,10 +58,10 @@ setup (
 		('share/pixmaps/', ['data/java-icon48.png']),
 		('share/java-config-2/launcher', ['src/launcher.bash']),
 		('share/eselect/modules', glob('src/eselect/*.eselect')),
-		('/etc/java-config-2/build/', ['config/jdk.conf','config/compilers.conf']),
-		('/etc/env.d/',['config/20java-config']),
-		('/etc/profile.d/', glob('src/profile.d/*')),
-		('/etc/revdep-rebuild/', ['src/revdep-rebuild/60-java'])
+		(eprefix() + '/etc/java-config-2/build/', ['config/jdk.conf','config/compilers.conf']),
+		(eprefix() + '/etc/env.d/',['config/20java-config']),
+		(eprefix() + '/etc/profile.d/', glob('src/profile.d/*')),
+		(eprefix() + '/etc/revdep-rebuild/', ['src/revdep-rebuild/60-java'])
 	]
 )
 
