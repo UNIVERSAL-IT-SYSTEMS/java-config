@@ -63,9 +63,12 @@ def parse_depend_string(option, opt, value, parse):
         sys.ext(1)
 
 if __name__ == '__main__':
+    eprefix = os.getenv('EPREFIX', '@GENTOO_PORTAGE_EPREFIX@')
+    root = os.getenv('ROOT', '')
+
     global printer, manager, verman
     printer = OutputFormatter(True, True)
-    manager = EnvironmentManager()
+    manager = EnvironmentManager(root, eprefix)
     verman = VersionManager()
 
     usage =  "depend-java-query [options]\n\n"
