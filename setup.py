@@ -50,7 +50,6 @@ setup (
 	package_dir = { 'java_config_2' : 'src/java_config_2' },
 	scripts = ['src/java-config-2','src/depend-java-query','src/run-java-tool', 'src/gjl'],
 	data_files = [
-		('share/java-config-2/pym/java_config/', glob('src/java_config/*')),
 		('share/applications/', ['data/javaws.desktop']),
 		('share/icons/hicolor/48x48/mimetypes/', ['data/application-x-java-jnlp-file.png']),
 		('share/pixmaps/', ['data/java-icon48.png']),
