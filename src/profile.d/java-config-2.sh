@@ -3,8 +3,8 @@
 # $Header: /var/cvsroot/gentoo-x86/dev-java/java-config/files/java-config-2.profiled.sh-r1,v 1.1 2007/03/16 11:13:16 betelgeuse Exp $
 
 # If we have a current-user-vm (and aren't root)... set it to JAVA_HOME
-gentoo_user_vm="${HOME}/.gentoo/java-config-2/current-user-vm"
-gentoo_system_vm="/etc/java-config-2/current-system-vm"
+gentoo_user_vm="${HOME}/.gentoo@GENTOO_PORTAGE_EPREFIX@/java-config-2/current-user-vm"
+gentoo_system_vm="@GENTOO_PORTAGE_EPREFIX@/etc/java-config-2/current-system-vm"
 
 # Please make sure that this script is POSIX compliant
 # See https://bugs.gentoo.org/show_bug.cgi?id=169925
@@ -23,7 +23,7 @@ fi
 if [ "${user_id}" != 0 -a -L "${gentoo_user_vm}" ]; then
 	export JAVA_HOME=${gentoo_user_vm}
 # Otherwise set to the current system vm
-elif [ -L /etc/java-config-2/current-system-vm ]; then
+elif [ -L "${gentoo_system_vm}" ]; then
 	export JAVA_HOME=${gentoo_system_vm}
 fi
 
