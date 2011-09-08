@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Not-so-elegant? patches more then welcome
 
 abort() {
