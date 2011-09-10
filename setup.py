@@ -79,6 +79,7 @@ setup (
 		('share/pixmaps/', ['data/java-icon48.png']),
 		('share/java-config-2/launcher', ['src/launcher.bash']),
 		('share/eselect/modules', glob('src/eselect/*.eselect')),
+		(eprefix() + '/etc/java-config-2/', ['config/virtuals']),
 		(eprefix() + '/etc/java-config-2/build/', ['config/jdk.conf','config/compilers.conf']),
 		(eprefix() + '/etc/env.d/',['config/20java-config']),
 		(eprefix() + '/etc/profile.d/', glob('src/profile.d/*')),

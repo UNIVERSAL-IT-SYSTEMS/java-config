@@ -1,0 +1,6 @@
+# Here you can set which provider to prefer for a given virtual at runtime.
+#
+# Example:
+#
+#javamail=gnu-javamail-1
+#javamail=sun-javamail
