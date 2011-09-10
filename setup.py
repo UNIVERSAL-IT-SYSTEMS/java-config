@@ -8,8 +8,7 @@ def eprefix():
 	return os.getenv('EPREFIX', '')
 
 from distutils.command.build import build
-import fileinput
-import sys
+import fileinput, shutil, sys
 
 class my_build(build):
 
@@ -20,9 +19,11 @@ class my_build(build):
 		build.finalize_options(self)
 		
 	def run(self):
-		# TODO Should make a copy first. -sera
-		for path in ['conf', 'man', 'src']:
-			for base, dirs, files in os.walk(path):
+		shutil.rmtree("tmp/", ignore_errors=1)
+		for path in ['config', 'man', 'src']:
+			tmp_path = "tmp/" + path
+			shutil.copytree(path, tmp_path)
+			for base, dirs, files in os.walk(tmp_path):
 				for f in files:
 					for line in fileinput.input(os.path.join(base, f),inplace=True):
 						sys.stdout.write(line.replace('@GENTOO_PORTAGE_EPREFIX@', eprefix()))
@@ -71,19 +72,19 @@ setup (
 	maintainer_email = 'java@gentoo.org',
 	url = 'http://www.gentoo.org',
 	packages = ['java_config_2'],
-	package_dir = { 'java_config_2' : 'src/java_config_2' },
-	scripts = ['src/java-config-2','src/depend-java-query','src/run-java-tool', 'src/gjl'],
+	package_dir = { 'java_config_2' : 'tmp/src/java_config_2' },
+	scripts = ['tmp/src/java-config-2','tmp/src/depend-java-query','tmp/src/run-java-tool', 'tmp/src/gjl'],
 	data_files = [
 		('share/applications/', ['data/javaws.desktop']),
 		('share/icons/hicolor/48x48/mimetypes/', ['data/application-x-java-jnlp-file.png']),
 		('share/pixmaps/', ['data/java-icon48.png']),
-		('share/java-config-2/launcher', ['src/launcher.bash']),
-		('share/eselect/modules', glob('src/eselect/*.eselect')),
-		(eprefix() + '/etc/java-config-2/', ['config/virtuals']),
-		(eprefix() + '/etc/java-config-2/build/', ['config/jdk.conf','config/compilers.conf']),
-		(eprefix() + '/etc/env.d/',['config/20java-config']),
-		(eprefix() + '/etc/profile.d/', glob('src/profile.d/*')),
-		(eprefix() + '/etc/revdep-rebuild/', ['src/revdep-rebuild/60-java'])
+		('share/java-config-2/launcher', ['tmp/src/launcher.bash']),
+		('share/eselect/modules', glob('tmp/src/eselect/*.eselect')),
+		(eprefix() + '/etc/java-config-2/', ['tmp/config/virtuals']),
+		(eprefix() + '/etc/java-config-2/build/', ['tmp/config/jdk.conf','tmp/config/compilers.conf']),
+		(eprefix() + '/etc/env.d/',['tmp/config/20java-config']),
+		(eprefix() + '/etc/profile.d/', glob('tmp/src/profile.d/*')),
+		(eprefix() + '/etc/revdep-rebuild/', ['tmp/src/revdep-rebuild/60-java'])
 	]
 )
 
