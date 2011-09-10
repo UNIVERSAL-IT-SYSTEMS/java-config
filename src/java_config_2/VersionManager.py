@@ -206,7 +206,7 @@ class VersionManager:
             except:
                 pass
 
-        deep_pkgs = get_needed_packages(*pkgs)
+        deep_pkgs = self.get_needed_packages(*pkgs)
 
         for pkg in deep_pkgs:
             try:
