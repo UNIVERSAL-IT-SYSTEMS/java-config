@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-# Copyright 2004-2007 Gentoo Foundation
+# Copyright 2004-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -65,7 +65,7 @@ class Virtual(Package):
             if not element in self._packages:
                 self._packages.append(element)
 
-        verman = VersionManager()
+        verman = VersionManager(self._manager)
         vmachines = self._manager.get_virtual_machines()
         for vm in vmachines:
             if verman.version_satisfies(" ".join(vms), vmachines[vm]):
