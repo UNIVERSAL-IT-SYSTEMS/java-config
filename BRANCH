@@ -1,23 +1,93 @@
 Purpose:
 --------
-
 This branch is meant to improve/fix/cleanup java-config. This includes:
 
-Target java-config-2.2 (generation3-support):
 
+Target java-config-2.2 (generation3-support):
+---------------------------------------------
 - Add ROOT support.
 - Add prefix support.
 - eselect update actions.
 - java-config is for scripting only. Human friendly output belongs to eselect.
 - Add missing queries. (VM lists)
 - Update manpage.
+
+
+Target java-config-2.2.1:
+-----------------------
 - Add migration code.
 
 
 Target java-config-3:
-
+---------------------
 - Unify paths
 - Add EAPI like *.env support
 - make java-config-wrapper package obsolete.
 - move java-check-environment to java-config or javatoolkit
 - Remove deprecated options/code.
+
+
+Some thoughts for a possible java-config-3 command line. (rename to java-query or some such?)
+--------------------------------------------------------
+java-config [opts] <command> [command-opts] [args]
+
+opts:
+	--help
+	--version
+	--select-vm=VM
+	--debug / --verbose
+
+commands:
+	print-tool <tool>
+		Tool in java, javac, jar etc.
+	print-active-vm [opts]:
+		--tools-jar
+		--version
+		--env
+		--env-var=VAR
+		--runtime
+		--java-home
+	print-vms [opts]:
+		--jdks
+		--target-version
+		--bootclasspath-version
+	print-packages [opts] <packages>:
+		--classpath
+		--source
+		--doc
+		--env-var=VAR
+	print-virtual-providers <package>:
+
+
+Some thoughts on API design:
+----------------------------
+Add class Environment as successor for EnvironmentManager. This will be the
+default entry point for all scripts.
+
+Add class Version to handle version comparsion.
+
+Drop VersionManager, wont be needed and currently depends on portage.
+
+
+Some thoughts on config file:
+-----------------------------
+/etc/java-config.conf with sections.
+
+[build-jdks]
+...
+[compiler]
+...
+[virtuals]
+...
+
+
+Some thoughts on env file organisation:
+---------------------------------------
+/usr/share/gentoo-java/packages
+/usr/share/gentoo-java/vms
+/usr/share/gentoo-java/virtuals
+
+Naming of env files:
+	JAVA_PKG_NAME-<EAPI>.env
+	JAVA_PKG_NAME.env<EAPI>
+	...
