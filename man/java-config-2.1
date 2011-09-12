@@ -1,4 +1,4 @@
-.TH "JAVA-CONFIG" "1" "June 2005" "java-config 2.0.0" "User Commands"
+.TH "JAVA-CONFIG" "1" "September 2011" "java-config 2.2.0" "User Commands"
 .SH "NAME"
 java\-config \- The Java configuration tool for Gentoo
 .SH "SYNOPSIS"
@@ -36,8 +36,8 @@ Query current JVM for version.
 Calculate classpath for a package. If a package is installed in different 
 slots you can also specify the slot to get the specific classpath informations.
 .TP 
-\fB\-e filename \-\-exec=filename\fI
-Figure full path to one of the JDK/JRE utilities, such as 
+\fB\-e command \-\-exec=command\fI
+Run the specified JDK/JRE utility of the active vm, such as 
 .I keytool 
 ,
 .I rmic
@@ -76,30 +76,29 @@ Sets the user\-specific JVM by putting all necessary env vars into
 \fB\-f \-\-show\-active\-vm\fI
 Show the JVM that's currently active, as set via \-\-set\-system\-vm or \-\-set\-user\-vm.
 .TP 
-\fB\-A <pkg1>,<pkg2>,... \-\-set\-system\-classpath=<package1>,<package2>,...\fI
-Sets the system\-wide default CLASSPATH.
-.TP 
-\fB\-a <pkg1>,<pkg2>,... \-\-set\-user\-classpath=<package1>,<package2>,...\fI
-Sets the user\-specific CLASSPATH by putting all necessary env vars into 
-.I $HOME/.gentoo/java\-env\-classpath
-(sourced from $HOME/.gentoo/java\-env).
-.TP 
-\fB\-X \-\-clean\-system\-classpath\fI
-Cleans the system\-wide default classpath, leaving only vm needed jars
-on it.
-.TP 
-\fB\-x \-\-clean\-user\-classpath\fI
-Cleans the user specific classpath that was specified by
-.I \-\-set\-user\-classpath
-by deleting
-.I $HOME/.gentoo/java\-env\-classpath .
-.
-.TP 
 \fB\-n \-\-nocolor\fI
 Turn off all colors.
 .TP 
 \fB\-P <vm\-id> \-\-print=<vm\-id>\fI
 Print the environment information for the specified virtual machine. 
+.TP 
+\fB-d, --with-dependencies\fI
+Include package dependencies in --classpath and --library calls.
+.TP 
+\fB-r, --runtime\fI
+Print the runtime classpath.
+.TP 
+\fB--package=PACKAGE(S)\fI
+Retrieve a value from a packages package.env file, value is specified by --query.
+.TP
+\fB-q QUERY, --query=QUERY\fI
+Value to retieve from packages package.env file, specified by --package.
+.TP
+\fB--get-virtual-providers=PACKAGE(S)\fI
+Return a list of packages that provide a virtual.
+.TP
+\fB--select-vm=VM\fI
+Use this vm instead of the active vm when returning information.
 .
 
 .SH "NOTES"
@@ -112,6 +111,8 @@ in the output of
 inside the brackets. Ex. [blackdown\-jdk\-1.4.1] and you can use this to
 set your default Java Virtual Machine.
 
+.SH "MAINTAINER"
+java@gentoo.org
 .SH "AUTHORS"
 Karl Trygve Kalleberg <karltk@gentoo.org>
 .br 
@@ -120,10 +121,13 @@ Adrian Almenar <strider@gentoo.org>
 Jason Mobarak <aether@gentoo.org>
 
 .SH "BUGS"
-Report any bugs you find to http://bugs.gentoo.org/.
+Report any bugs you find to https://bugs.gentoo.org/.
 
 .SH "SEE ALSO"
 env\-update(5)
 .TP 
 The \fI/usr/bin/java\-config\fR script. 
 .TP 
+eselect java-vm
+.TP
+eselect java-nsplugin
