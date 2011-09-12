@@ -72,7 +72,7 @@ class VersionManager:
             # then try system vm
             sys_vm = self.env_manager.system_vm_name()
             if sys_vm is not None:
-            	self._prefs.append(['*', [sys_vm]])
+                self._prefs.append(['*', [sys_vm]])
             # then try the build defaults
             if os.path.exists(self.default_pref_file):
                 self._prefs += PrefsFileParser(self.default_pref_file).get_config()
@@ -359,6 +359,30 @@ needed dependency, report this to http://bugs.gentoo.org.
                     unresolved.add(p)
     
         return resolved
+
+    def sort_vms_by_prefs(self, vm_list, version):
+        result = []
+        vms = list(vm_list)
+
+        # VM __eq_ is implemeted in terms of version provided and so we cheat.
+        prefs = self.get_prefs()
+        for pref in prefs:
+            if pref[0] == version or pref[0] == "*":
+                for handle in pref[1]:
+                    for i, vm in enumerate(vms):
+                        if vm.name().startswith(handle):
+                            result.append(vm)
+                            vms.pop(i)
+
+        # version_cmp returns float! Cheat onces more.
+        #vms.sort(lambda x, y : self.version_cmp(x.version(), y.version()))
+        vms.sort(key=lambda vm : vm.version());
+
+        for vm in vms:
+            result.append(vm)
+
+        return result
+
 
 #vator=VersionManager()
 #for i in [  

@@ -129,10 +129,18 @@ class EnvironmentManager(object):
             self.load_active_vm()
         return self.active
 
-    def get_virtual_machines(self):
+    def get_virtual_machines(self, include_jre=1, include_build_only=1):
         if self.virtual_machines is None:
             self.load_vms()
-        return self.virtual_machines
+        vms = {}
+        for k, v in self.virtual_machines.items():
+            if not include_jre and not v.is_jdk():
+                continue
+            if not include_build_only and v.is_build_only():
+                continue
+            vms[k] = v
+
+        return vms
 
     def find_vm(self, name):
         found = []

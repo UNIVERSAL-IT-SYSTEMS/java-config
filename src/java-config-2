@@ -8,6 +8,7 @@
 from java_config_2 import __version__
 from java_config_2.OutputFormatter import OutputFormatter
 from java_config_2.EnvironmentManager import EnvironmentManager
+from java_config_2.VersionManager import VersionManager
 from java_config_2.Errors import *
 
 import os
@@ -180,7 +181,18 @@ def print_jdks(option, opt, value, parser):
     """
     Prints the handels of the jdks avaiable and fulfilling the requirements.
     """
-    fatalError("Not yet implemented!")
+    # VM __eq_ is implemeted in terms of version provided -> conceptually broken.
+    copy = []
+    vms = manager.get_virtual_machines(include_jre=0).values()
+    if parser.values.min_target:
+        for vm in vms:
+            if verman.version_cmp(vm.version(), parser.values.min_target) >= 0:
+                copy.append(vm)
+    else:
+        copy = vms
+
+    for vm in verman.sort_vms_by_prefs(copy, parser.values.min_target):
+        print(vm)
 
 def set_system_vm(option, opt, value, parser):
     vm = manager.get_vm(value)
@@ -329,6 +341,7 @@ if __name__ == '__main__':
     global printer, manager
     printer = OutputFormatter(True, True)
     manager = EnvironmentManager(root, eprefix)
+    verman = VersionManager(manager)
 
     usage =  "java-config [options]\n\n"
     usage += "Java Configuration Utility Version " + str(__version__) + "\n"
@@ -501,6 +514,14 @@ if __name__ == '__main__':
                     args.insert(0,opt)
                 except ValueError:
                     pass
+
+            args = sys.argv[1:]
+            try:
+                args.remove('--print-jdks')
+                args.append('--print-jdks')
+            except ValueError:
+                pass
+            
 
             (options, args) = parser.parse_args(args=args)
         except InvalidVMError:
