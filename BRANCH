@@ -12,51 +12,88 @@ Target java-config-2.2 (generation3-support):
 - Add missing queries. (VM lists)
 - Update manpage.
 
+	Status: basically implemented. Some tweaks might be desirable.
 
 Target java-config-2.2.1:
 -----------------------
 - Add migration code.
 
+	Status: likely not needed, can be handled in java_config_3
+
 
 Target java-config-3:
----------------------
+#####################
 - Unify paths
 - Add EAPI like *.env support
 - make java-config-wrapper package obsolete.
 - move java-check-environment to java-config or javatoolkit
 - Remove deprecated options/code.
 
+Contents
+--------
+Python packages: java_config_2 java_config_3
+Scripts:
+	java-config-2
+		Uses java_config_3, will provide backwards compatibility for as long
+		it makes sense.
+	java-config-3
+		Replacment, targeted towards scripting
+	depend-java-query
+		Needed for generation 2, uses java_config_2 - both will be deprecated
+		and finally removed once there are no generation 2 ebuilds anymore.
+		This allows to drop the dependency on portage.
+	java-check-environment
+		The wrapper is definitifely the wrong place for that script.
 
-Some thoughts for a possible java-config-3 command line. (rename to java-query or some such?)
---------------------------------------------------------
+Rest as now, just using java_config_3
+
+
+Some thoughts for a possible java-config-3 command line. (Suggestions welcome)
+------------------------------------------------------------------------------
 java-config [opts] <command> [command-opts] [args]
 
 opts:
 	--help
-	--version
-	--select-vm=VM
-	--debug / --verbose
+	--version                        Print java-config version
+	--log-level                      At least DEBUG and ERROR
+	--log-file                       Defaults to stderr
+	--config CONFIG                  Use CONFIG instead of default environment
+	                                 config file.
+	--root ROOT                      Alternative ROOT
+	--eprefix EPREFIX                Alternative Gentoo Prefix
+	--vm VM                          Use VM as active JVM
 
 commands:
-	print-tool <tool>
-		Tool in java, javac, jar etc.
-	print-active-vm [opts]:
+	print-tool <tool>                Print path to tool. (java, javac, jar etc.)
+		tool :                         Name of tool.
+	print-vm [opts]:                 Print info about the current JVM.
 		--tools-jar
-		--version
+		--java-version
 		--env
-		--env-var=VAR
+		--env-var ENV_VAR
 		--runtime
 		--java-home
-	print-vms [opts]:
+		-h, --help
+	print-vms [opts]
 		--jdks
-		--target-version
-		--bootclasspath-version
-	print-packages [opts] <packages>:
+		--target TARGET              Only VMs supporting comping for target or running
+		                             classes compiled for target.
+		--api-version  API_VERSION   Can be specified multiple times. Restric bcp.
+		--[no-]sort                  (How many reasonable ways to sort are there?)
+		--abi ABI                    x86_32 x86_64 etc. (Needed at all?) 
+		-h, --help
+	print-package [opts] <packages>
 		--classpath
 		--source
 		--doc
+		--examples
 		--env-var=VAR
-	print-virtual-providers <package>:
+	print-packages
+		-h, --help
+	print-virtuals <package>
+		-h, --help
+	help <command>
+		-h, --help
 
 
 Some thoughts on API design:
@@ -64,14 +101,20 @@ Some thoughts on API design:
 Add class Environment as successor for EnvironmentManager. This will be the
 default entry point for all scripts.
 
+Environment will use an EnvironmentConfig for loading. This allows for pluggable
+environment implementations. Used to swith to centralized env handling and to
+support env file format bumps.
+
 Add class Version to handle version comparsion.
 
-Drop VersionManager, wont be needed and currently depends on portage.
+Drop VersionManager, wont be needed and currently depends on portage. Will
+remain java_config_2 only.
 
 
 Some thoughts on config file:
 -----------------------------
-/etc/java-config.conf with sections.
+/etc/java-config.conf with sections. Everyting in one place and makes the
+--config option usefull. Supports comments and some interpolation.
 
 [build-jdks]
 ...
@@ -83,11 +126,23 @@ Some thoughts on config file:
 
 Some thoughts on env file organisation:
 ---------------------------------------
-/usr/share/gentoo-java/packages
-/usr/share/gentoo-java/vms
-/usr/share/gentoo-java/virtuals
+/usr/share/java-config/package.env.2.d/
+/usr/share/java-config/vm.env.2.d/
+/usr/share/java-config/virtual.env.2.d/
 
 Naming of env files:
 	JAVA_PKG_NAME-<EAPI>.env
-	JAVA_PKG_NAME.env<EAPI>
+	JAVA_PKG_NAME.env-<EAPI>
+	JAVA_PKG_NAME.env              Only with EAPI by path.
 	...
+
+
+This will allow packages to be installed in arbitrary paths and will make
+lookup faster. Also does it allow to change env file format.
+
+
+Migration:
+##########
+java-config-3 will provide java-config-2 for as long as needed.
+
+Eclasses will start putting env files into the new locations.
