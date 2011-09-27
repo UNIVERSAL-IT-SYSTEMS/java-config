@@ -9,6 +9,7 @@ from java_config_2 import __version__
 from java_config_2.OutputFormatter import OutputFormatter
 from java_config_2.EnvironmentManager import EnvironmentManager
 from java_config_2.VersionManager import VersionManager
+from java_config_2.Version import Version
 from java_config_2.Errors import *
 
 import os
@@ -20,7 +21,7 @@ except ImportError:
     # Python 2.
     from commands import getoutput
 
-from optparse import OptionParser, OptionGroup, make_option
+from optparse import OptionParser, OptionGroup
 
 def version(option, opt, value, parser):
     printer._print("%H%BJava Configuration Utility %GVersion " + str(__version__))
@@ -181,18 +182,21 @@ def print_jdks(option, opt, value, parser):
     """
     Prints the handels of the jdks avaiable and fulfilling the requirements.
     """
-    # VM __eq_ is implemeted in terms of version provided -> conceptually broken.
+
+    # VM __eq_ is implemeted in terms of version provided, which in turn
+    # is just a string.
     copy = []
     vms = manager.get_virtual_machines(include_jre=0).values()
     if parser.values.min_target:
+        target_version = Version(parser.values.min_target)
         for vm in vms:
-            if verman.version_cmp(vm.version(), parser.values.min_target) >= 0:
+            if target_version <= Version(vm.version()):
                 copy.append(vm)
     else:
         copy = vms
 
     for vm in verman.sort_vms_by_prefs(copy, parser.values.min_target):
-        print(vm)
+        print(vm.name())
 
 def set_system_vm(option, opt, value, parser):
     vm = manager.get_vm(value)
