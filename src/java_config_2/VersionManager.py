@@ -4,15 +4,11 @@
 # Distributed under the terms of the GNU General Public license v2
 # $Header: $
 
-import sys
+import glob, os.path, re, sys
 sys.path.append("/usr/lib/portage/pym")
 
-import re
-
-from . import VM, Errors 
-from java_config_2.FileParser import *
-import os, glob, re
-import os.path
+from .FileParser import PrefsFileParser
+from .Version import Version
 
 
 class _DepSpec(dict):
@@ -374,12 +370,9 @@ needed dependency, report this to http://bugs.gentoo.org.
                             result.append(vm)
                             vms.pop(i)
 
-        # version_cmp returns float! Cheat onces more.
-        #vms.sort(lambda x, y : self.version_cmp(x.version(), y.version()))
-        vms.sort(key=lambda vm : vm.version());
-
-        for vm in vms:
-            result.append(vm)
+        # Sort the rest by java version provided, lower first
+        vms.sort(key=lambda vm : Version(vm.version()))
+        result.extend(vms);
 
         return result
 
