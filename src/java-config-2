@@ -180,22 +180,31 @@ def print_environment(option, opt, value, parser):
 
 def print_jdks(option, opt, value, parser):
     """
-    Prints the handels of the jdks avaiable and fulfilling the requirements.
+    Prints the handels of JDKs avaiable and fulfilling the specified
+    requirements.
     """
 
     # VM __eq_ is implemeted in terms of version provided, which in turn
     # is just a string.
-    copy = []
     vms = manager.get_virtual_machines(include_jre=0).values()
-    if parser.values.min_target:
-        target_version = Version(parser.values.min_target)
+
+    if parser.values.target_version:
+        target_version = Version(parser.values.target_version)
+        copy = []
         for vm in vms:
             if target_version <= Version(vm.version()):
                 copy.append(vm)
-    else:
-        copy = vms
+        vms = copy
 
-    for vm in verman.sort_vms_by_prefs(copy, parser.values.min_target):
+    if parser.values.bcp_version:
+        versions = map(lambda v: Version(v), parser.values.bcp_version)
+        copy = []
+        for vm in vms:
+            if Version(vm.version()) in versions:
+                copy.append(vm)
+        vms = copy
+
+    for vm in verman.sort_vms_by_prefs(vms, parser.values.target_version):
         print(vm.name())
 
 def set_system_vm(option, opt, value, parser):
@@ -436,13 +445,17 @@ if __name__ == '__main__':
                     action="callback", callback=print_jdks,
                     help="Print a list of available jdks")
     group.add_option("--target-version",
-                    type="string", dest="min_target",
-                    help="Restrict to jdks supporting the target (ie. 1.6)")
+                    type="string", dest="target_version",
+                    help="Restrict to JDKs supporting the target (ie. 1.6)")
+    group.add_option("--bcp-version", action="append",
+                    type="string", dest="bcp_version",
+                    help="Restrict to JDKs having a bootclasspath of a specific version.")
 
     parser.add_option_group(group)
 
     # Deprecated
-    group = OptionGroup(parser, "Deprecated")
+    group = OptionGroup(parser, "Deprecated",
+                        "Those options have alternatives and nocolor will become the default")
     group.add_option("-n", "--nocolor",
                     action="callback", callback=nocolor,
                     help="Disable color output")
