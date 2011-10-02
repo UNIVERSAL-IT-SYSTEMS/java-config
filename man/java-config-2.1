@@ -14,6 +14,9 @@ default JVM.
 In addition, it is used by Portage as a common interface to querying 
 properties about the various JVMs.
 .SH "OPTIONS "
+.TP
+\fB--select-vm=VM\fI
+Use this vm instead of the active vm when returning information.
 .TP 
 \fB\-c \-\-javac\fI
 Show full path to currently selected Java compiler.
@@ -23,11 +26,11 @@ Show full path to currently selected
 .I jar 
 command.
 .TP 
-\fB\-O \-\-jdk\-home\fI
-Show path to currently selected JDK.
+\fB\-o, O, --java-home, --jdk-home, \-\-jre\-home\fI
+Print JAVA_HOME of currently selected JVM.
 .TP 
-\fB\-o \-\-jre\-home\fI
-Show path to currently selected JRE.
+\fB-t --tools\fI
+Print path to tools.jar
 .TP 
 \fB\-v \-\-java\-version\fI
 Query current JVM for version.
@@ -35,6 +38,9 @@ Query current JVM for version.
 \fB\-p [pkg1[\-SLOT],pkg2[\-SLOT],...] \-\-classpath[=package1,package2,...]\fI
 Calculate classpath for a package. If a package is installed in different 
 slots you can also specify the slot to get the specific classpath informations.
+.TP
+\fB-g VAR, --get-env=VAR\fI
+Print an environment variable from the active VM.
 .TP 
 \fB\-e command \-\-exec=command\fI
 Run the specified JDK/JRE utility of the active vm, such as 
@@ -97,8 +103,14 @@ Value to retieve from packages package.env file, specified by --package.
 \fB--get-virtual-providers=PACKAGE(S)\fI
 Return a list of packages that provide a virtual.
 .TP
-\fB--select-vm=VM\fI
-Use this vm instead of the active vm when returning information.
+\fB--print-jdks\fI
+Print a list of jdk handles, sorted by user preferences.
+.TP
+\fB--target-version VERSION\fI
+Only print JDKs supporting the specified target.
+.TP
+\fB--bcp-version VERSION\fI
+Only print JDKs with matching bootclasspath, can be specified multiple times.
 .
 
 .SH "NOTES"
