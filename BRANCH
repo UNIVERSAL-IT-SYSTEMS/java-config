@@ -8,17 +8,10 @@ Target java-config-2.2 (generation3-support):
 - Add ROOT support.
 - Add prefix support.
 - eselect update actions.
-- java-config is for scripting only. Human friendly output belongs to eselect.
 - Add missing queries. (VM lists)
 - Update manpage.
 
 	Status: basically implemented. Some tweaks might be desirable.
-
-Target java-config-2.2.1:
------------------------
-- Add migration code.
-
-	Status: likely not needed, can be handled in java_config_3
 
 
 Target java-config-3:
@@ -26,24 +19,26 @@ Target java-config-3:
 - Unify paths
 - Add EAPI like *.env support
 - make java-config-wrapper package obsolete.
+- java-config is for scripting only. Human friendly output belongs to eselect.
 - move java-check-environment to java-config or javatoolkit
 - Remove deprecated options/code.
 
 Contents
 --------
 Python packages: java_config_2 java_config_3
+
 Scripts:
 	java-config-2
 		Uses java_config_3, will provide backwards compatibility for as long
 		it makes sense.
 	java-config-3
-		Replacment, targeted towards scripting
+		Replacement, targeted towards scripting
 	depend-java-query
 		Needed for generation 2, uses java_config_2 - both will be deprecated
 		and finally removed once there are no generation 2 ebuilds anymore.
 		This allows to drop the dependency on portage.
 	java-check-environment
-		The wrapper is definitifely the wrong place for that script.
+		The wrapper is definitely the wrong place for that script.
 
 Rest as now, just using java_config_3
 
@@ -69,7 +64,7 @@ commands:
 	print-vm [opts]:                 Print info about the current JVM.
 		--tools-jar
 		--java-version
-		--env
+		--dump-env
 		--env-var ENV_VAR
 		--runtime
 		--java-home
@@ -78,7 +73,7 @@ commands:
 		--jdks
 		--target TARGET              Only VMs supporting comping for target or running
 		                             classes compiled for target.
-		--api-version  API_VERSION   Can be specified multiple times. Restric bcp.
+		--api-version  API_VERSION   Can be specified multiple times. Restrict bcp. (maybe --bcp-version)
 		--[no-]sort                  (How many reasonable ways to sort are there?)
 		--abi ABI                    x86_32 x86_64 etc. (Needed at all?) 
 		-h, --help
@@ -105,7 +100,8 @@ Environment will use an EnvironmentConfig for loading. This allows for pluggable
 environment implementations. Used to swith to centralized env handling and to
 support env file format bumps.
 
-Add class Version to handle version comparsion.
+Add class Version to handle version compairsion. Backported to java_config_2
+already.
 
 Drop VersionManager, wont be needed and currently depends on portage. Will
 remain java_config_2 only.
@@ -113,9 +109,11 @@ remain java_config_2 only.
 
 Some thoughts on config file:
 -----------------------------
-/etc/java-config.conf with sections. Everyting in one place and makes the
---config option usefull. Supports comments and some interpolation.
+/etc/java-config.conf with sections. Everything in one place and makes the
+--config option useful. Supports comments and some interpolation.
 
+[env]
+...
 [build-jdks]
 ...
 [compiler]
@@ -126,19 +124,16 @@ Some thoughts on config file:
 
 Some thoughts on env file organisation:
 ---------------------------------------
-/usr/share/java-config/package.env.2.d/
-/usr/share/java-config/vm.env.2.d/
-/usr/share/java-config/virtual.env.2.d/
+Env file paths:
+	/usr/share/java-config/{package,vm,virtual}.env-{2,3}.d/
 
 Naming of env files:
-	JAVA_PKG_NAME-<EAPI>.env
-	JAVA_PKG_NAME.env-<EAPI>
-	JAVA_PKG_NAME.env              Only with EAPI by path.
-	...
+	${CATEGORY}${SEPARATOR}${PN}${SEPARATOR}${SLOT}
 
-
-This will allow packages to be installed in arbitrary paths and will make
-lookup faster. Also does it allow to change env file format.
+This will allow packages to be installed in arbitrary paths / structure and
+will make lookup faster / easier. Also does it allow easier handling of changes
+to the env file format as the format is known prior to parsing. The category is
+used to handle package name collisions.
 
 
 Migration:
