@@ -177,15 +177,26 @@ describe_update() {
 	echo "Sets a system VM if none is set or if the current link is broken."
 }
 
-# TODO respect arch/user defaults or take an argument? -sera
+describe_set_parameters() {
+	echo "[VMHANDLE]"
+}
+
+describe_set_options() {
+	echo "VMHANDLE: Handle of VM to switch to if a switch is needed. (Optional)"
+}
+
 do_update() {
-	if [[ ! -d $(canonicalise ${VM_SYSTEM}) ]]; then
-		local targets=( $(find_targets) )
-		if [[ ${#targets[@]} > 0 ]]; then
-			echo "No system VM is set, selecting \"${targets[0]}\""
+	if [[ ! -d ${VM_SYSTEM} ]]; then
+		local target="${1}"
+		if [[ -z "${target}" ]]; then
+			local all_targets=( $(find_targets) )
+			target=${all_targets}
+		fi
+		if [[ ${target} ]]; then
+			echo "No system VM is set, selecting \"${target}\""
 			echo "To set a different one use eselect java-vm"
 
-			do_set system ${targets[0]}
+			do_set system ${target}
 		else
 			write_warning_msg "No suitable system VM could be found."
 			write_warning_msg "For Java applications to work install either a JDK or JRE."
