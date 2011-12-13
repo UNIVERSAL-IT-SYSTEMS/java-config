@@ -369,6 +369,9 @@ if __name__ == '__main__':
                     action="callback", callback=select_vm,
                     type="string", dest="vm",
                     help="Use this vm instead of the active vm when returning information")
+    parser.add_option("-n", "--nocolor",
+                    action="callback", callback=nocolor,
+                    help="Disable color output")
 
     # Queries
     group = OptionGroup(parser, "Queries")
@@ -384,6 +387,9 @@ if __name__ == '__main__':
     group.add_option("-t", "--tools",
                     action="callback", callback=tools,
                     help="Print the path to tools.jar")
+    group.add_option("-O", "--java-home",
+                    action="callback", callback=query_active_vm_cb, callback_args=("JAVA_HOME",),
+                    help="Print the location of the active JAVA_HOME")
     group.add_option("-f", "--show-active-vm",
                     action="callback", callback=show_active_vm,
                     help="Print the active Virtual Machine")
@@ -437,9 +443,6 @@ if __name__ == '__main__':
                     action="callback", callback=get_virtual_providers,
                     type="string", dest="package(s)",
                     help="Return a list of packages that provide a virtual")
-    group.add_option("--java-home",
-                    action="callback", callback=query_active_vm_cb, callback_args=("JAVA_HOME",),
-                    help="Print the location of the active JAVA_HOME")
     group.add_option("--print-jdks",
                     action="callback", callback=print_jdks,
                     help="Print a list of available jdks")
@@ -454,10 +457,7 @@ if __name__ == '__main__':
 
     # Deprecated
     group = OptionGroup(parser, "Deprecated",
-                        "Those options have alternatives and nocolor will become the default")
-    group.add_option("-n", "--nocolor",
-                    action="callback", callback=nocolor,
-                    help="Disable color output")
+                        "The prefered way to querry and set the vm is with eselect java-vm")
     group.add_option("-L", "--list-available-vms",
                     action="callback", callback=list_available_vms,
                     help="List available Java Virtual Machines")
@@ -469,10 +469,7 @@ if __name__ == '__main__':
                     action="callback", callback=set_user_vm,
                     type="string", dest="vm",
                     help="Set the default Java VM for the user")
-    group.add_option("-O", "--jdk-home",
-                    action="callback", callback=query_active_vm_cb, callback_args=("JAVA_HOME",),
-                    help="Print the location of the active JAVA_HOME")
-    group.add_option("-o", "--jre-home",
+    group.add_option("-o", "--jre-home", "--jdk-home",
                     action="callback", callback=query_active_vm_cb, callback_args=("JAVA_HOME",),
                     help="Print the location of the active JAVA_HOME")
 
